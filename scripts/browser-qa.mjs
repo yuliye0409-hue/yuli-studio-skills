@@ -1,0 +1,170 @@
+import {createRequire} from 'node:module';
+import fs from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+import {siteConfig} from '../public/site.config.js';
+const require=createRequire(import.meta.url);
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const baseURL=(process.env.BASE_URL||'http://127.0.0.1:4317').replace(/\/$/,'');
+const output=new URL('../artifacts/yuli-studio/',import.meta.url);
+await fs.mkdir(output,{recursive:true});
+const screenshotPath=name=>fileURLToPath(new URL(name,output));
+const browser=await chromium.launch({headless:true,...(process.env.BROWSER_CHANNEL?{channel:process.env.BROWSER_CHANNEL}:{})});
+const context=await browser.newContext({viewport:{width:1440,height:1000},colorScheme:'light',reducedMotion:'reduce',permissions:['clipboard-read','clipboard-write']});
+const page=await context.newPage();
+const errors=[],checks=[],assetRequests=[];
+page.on('request',request=>{if(request.url().startsWith(baseURL))assetRequests.push(request.url());});
+page.on('pageerror',error=>errors.push(error.message));
+page.on('response',response=>{if(response.url().startsWith(baseURL)&&response.status()>=400)errors.push(`${response.status()} ${response.url()}`);});
+function check(name,result){checks.push({name,passed:!!result});if(!result)throw new Error(`Failed: ${name}`);}
+async function choose(panel){await page.locator(`#tab-${panel}`).click();}
+try{
+  await page.goto(baseURL,{waitUntil:'networkidle'});
+  await page.evaluate(()=>document.fonts.ready);
+  check('Document title uses Yuli Studio',(await page.title()).startsWith('Yuli Studio'));
+  check('Header and footer use new brand',await page.locator('.brand').evaluateAll(elements=>elements.length===2&&elements.every(element=>element.textContent.includes('Yuli Studio'))));
+  check('Shared Y monogram in header and footer',await page.locator('.brand svg use').evaluateAll(elements=>elements.length===2&&elements.every(element=>element.getAttribute('href')==='./public/logo.svg#yuli-mark')));
+  check('Current website project renamed',await page.locator('.project-name').first().textContent()==='Yuli Studio');
+  check('No old public-facing brand',await page.locator('body').textContent().then(text=>!text.includes('技能自留地')&&!text.includes('THE CREATIVE GARDEN')&&!text.includes('SKILL GARDEN')));
+  check('Favicon switched to refreshed Y mark',await page.locator('link[rel=icon]').getAttribute('href')==='./public/favicon.svg?v=yuli-1');
+  check('Five primary content tabs',await page.locator('.main-tab').count()===5);
+  check('Default products panel and three project slots',await page.locator('#panel-products').isVisible()&&await page.locator('.project-card').count()===3);
+  check('No personal images in any panel',await page.locator('img').count()===0);
+  check('No avatar asset requested',!assetRequests.some(url=>/avatar|portrait/i.test(url)));
+  check('Interactive skill desk has three choices',await page.locator('[data-featured-skill]').count()===3);
+  check('Skill desk starts from real skill content',await page.locator('.workbench-skill h2').textContent()==='Prompt Architect');
+  for(const [id,title] of [['visual-story','Visual Storytelling'],['idea-to-interface','Idea to Interface'],['prompt-architect','Prompt Architect']]){
+    await page.locator(`[data-featured-skill="${id}"]`).click();
+    check(`Skill desk switches: ${id}`,await page.locator('.workbench-skill h2').textContent()===title&&await page.locator(`[data-featured-skill="${id}"]`).getAttribute('aria-pressed')==='true'&&await page.locator('[data-featured-skill][aria-pressed=true]').count()===1);
+  }
+  await page.locator('.workbench-action').click();
+  check('Skill desk opens real detail',await page.locator('#detail-title').textContent()==='把想法，说清楚'&&await page.locator('.prompt-box pre').textContent().then(text=>text.includes('验收标准')));
+  await page.keyboard.press('Escape');
+  check('Skill desk focus restored after closing',await page.locator('.workbench-action').evaluate(element=>element===document.activeElement));
+  check('Desktop header matches 64px spec',await page.locator('.site-header').evaluate(element=>element.getBoundingClientRect().height)===64);
+  const tokens=await page.evaluate(()=>({canvas:getComputedStyle(document.body).backgroundColor,primary:getComputedStyle(document.querySelector('.button-primary')).backgroundColor,card:getComputedStyle(document.querySelector('.skill-card')).backgroundColor,footer:getComputedStyle(document.querySelector('.site-footer')).backgroundColor,radius:getComputedStyle(document.querySelector('.hero-buttons .button-primary')).borderRadius,weight:getComputedStyle(document.querySelector('h1')).fontWeight,font:getComputedStyle(document.querySelector('h1')).fontFamily}));
+  check('Spec near-white canvas, white cards and black CTA',tokens.canvas==='rgb(250, 250, 250)'&&tokens.primary==='rgb(23, 23, 23)'&&tokens.card==='rgb(255, 255, 255)');
+  check('White footer replaces old dark footer',tokens.footer==='rgb(255, 255, 255)');
+  check('Marketing CTA uses 100px pill',tokens.radius==='100px');
+  check('Semibold geometric sans replaces serif display',tokens.weight==='600'&&tokens.font.includes('Geist')&&!tokens.font.includes('Cormorant'));
+  check('Hero is centered, not split',await page.locator('.hero-copy').evaluate(element=>getComputedStyle(element).textAlign)==='center');
+  check('Hero atmospheric mesh uses multiple gradient colors',await page.locator('.hero-mesh').evaluate(element=>(getComputedStyle(element).backgroundImage.match(/radial-gradient/g)||[]).length===6));
+  check('All display weights stay within 600 ceiling',await page.locator('h1,h2,h3').evaluateAll(elements=>elements.every(element=>Number(getComputedStyle(element).fontWeight)<=600)));
+  check('Desktop project cards use three columns',await page.locator('.project-grid').evaluate(element=>getComputedStyle(element).gridTemplateColumns.split(' ').length)===3);
+  check('Verified GitHub profile is bound',await page.locator('#header-github [data-profile-link]').getAttribute('href')===siteConfig.profile.github);
+  check('Project repo placeholders are visible',await page.locator('#project-grid [data-pending-repository]').count()===Object.values(siteConfig.projects).filter(binding=>!binding.repository).length);
+  await page.evaluate(()=>scrollTo(0,0));
+  await page.screenshot({path:screenshotPath('home.png'),fullPage:true});
+  await page.screenshot({path:screenshotPath('preview.png'),fullPage:false});
+  await page.locator('[data-demo="code"]').click();
+  check('Working code preview toggle',await page.locator('#code-preview').isVisible()&&!await page.locator('#garden-preview').isVisible());
+  await page.locator('[data-demo="preview"]').click();
+  check('Working visual preview toggle',await page.locator('#garden-preview').isVisible());
+  await page.locator('[data-project="creative-workbench"]').click();
+  check('Project details identify sample status',await page.locator('#detail-dialog').evaluate(dialog=>dialog.open)&&await page.locator('.detail-demo-note').textContent().then(text=>text.includes('示例')));
+  await page.keyboard.press('Escape');
+  await choose('skills');
+  check('Skills tab and hash routing',await page.locator('.skill-card').count()===8&&page.url().endsWith('#skills'));
+  await page.locator('#filter-ai').click();
+  check('AI category filter',await page.locator('.skill-card').count()===3);
+  await page.locator('#filter-all').click();
+  await page.keyboard.press('/');
+  check('Search shortcut focuses input',await page.locator('#search-input').evaluate(input=>input===document.activeElement));
+  await page.locator('#search-input').fill('PROMPT');
+  check('Case-insensitive English search',await page.locator('.skill-card').count()===1);
+  await page.locator('#search-input').fill('不存在的技能');
+  check('Empty result state',await page.locator('#empty-state').isVisible());
+  await page.locator('#reset-filters').click();
+  await page.locator('#skills-grid [data-save="prompt-architect"]').click();
+  await page.reload({waitUntil:'networkidle'});
+  check('Deep link and favorite persist on reload',await page.locator('#panel-skills').isVisible()&&await page.locator('#skills-grid [data-save="prompt-architect"]').getAttribute('aria-pressed')==='true');
+  await page.locator('#favorites-button').click();
+  check('Favorites filter',await page.locator('.skill-card').count()===1);
+  await page.locator('#skills-grid [data-open="prompt-architect"]').click();
+  check('Skill detail and prompt body',await page.locator('.prompt-box pre').textContent().then(text=>text.includes('验收标准')));
+  await page.locator('#copy-prompt').click();
+  check('Copy prompt writes real clipboard',await page.evaluate(()=>navigator.clipboard.readText()).then(text=>text.includes('验收标准')));
+  await page.screenshot({path:screenshotPath('skill-detail.png'),fullPage:false});
+  await page.keyboard.press('Escape');
+  check('Escape closes modal',!await page.locator('#detail-dialog').evaluate(dialog=>dialog.open));
+  await page.locator('#skills-grid [data-save="prompt-architect"]').click();
+  check('Empty favorites state',await page.locator('#empty-state').isVisible()&&await page.locator('.skill-card').count()===0);
+  await page.locator('#reset-filters').click();
+  await page.locator('[data-workflow="create"]').click();
+  check('Workflow contains three skill links',await page.locator('.workflow-detail-skill').count()===3);
+  await page.locator('.workflow-detail-skill').first().click();
+  check('Workflow opens linked skill',await page.locator('#detail-title').textContent()==='把想法，说清楚');
+  await page.locator('#close-dialog').click();
+  await choose('skills');
+  await page.screenshot({path:screenshotPath('skills.png'),fullPage:true});
+  await choose('articles');
+  check('Three draft articles',await page.locator('.article-row').count()===3);
+  await page.locator('.article-row').first().click();
+  check('Article reader contains real draft paragraphs',await page.locator('.article-body h3').count()===3&&await page.locator('.article-body p').count()===3);
+  await page.keyboard.press('Escape');
+  await page.screenshot({path:screenshotPath('articles.png'),fullPage:true});
+  await choose('about');check('About panel uses typographic manifesto',await page.locator('.about-story').isVisible()&&await page.locator('.about-manifesto').isVisible());
+  await choose('connect');
+  await page.locator('#copy-conversation').click();
+  check('Conversation outline copied, no fake submission',await page.evaluate(()=>navigator.clipboard.readText()).then(text=>text.includes('希望一起讨论')));
+  await page.locator('#tab-connect').press('Home');
+  check('Keyboard tab navigation',await page.locator('#tab-products').getAttribute('aria-selected')==='true');
+  await choose('articles');await choose('about');await page.goBack();
+  check('Back navigation restores selected panel',await page.locator('#panel-articles').isVisible());
+  for(const width of [320,390,600,768,960,1024,1440]){
+    await page.setViewportSize({width,height:900});
+    for(const panel of ['products','skills','articles','about','connect']){
+      await choose(panel);
+      const layout=await page.evaluate(()=>({width:innerWidth,body:document.body.scrollWidth,doc:document.documentElement.scrollWidth}));
+      if(layout.body>width||layout.doc>width)console.log({width,panel,layout});
+      check(`No overflow: ${panel} at ${width}px`,layout.body<=width&&layout.doc<=width);
+    }
+    await choose('products');
+    check(`Responsive column count at ${width}px`,await page.locator('.project-grid').evaluate(element=>getComputedStyle(element).gridTemplateColumns.split(' ').length)===(width<600?1:width<960?2:3));
+    check(`Nav breakpoint at ${width}px`,await page.locator('#menu-toggle').isVisible()===(width<600));
+    if(width===390){
+      await choose('products');await page.evaluate(()=>scrollTo(0,0));
+      await page.screenshot({path:screenshotPath('mobile.png'),fullPage:true});
+      await page.locator('#menu-toggle').click();
+      check('Mobile navigation opens native modal',await page.locator('#mobile-menu').evaluate(menu=>menu.open));
+      check('Mobile menu uses new name',await page.locator('.mobile-menu-top>span').textContent()==='Yuli Studio');
+      await page.locator('#mobile-menu [data-panel="articles"]').click();
+      check('Mobile navigation selects and closes',await page.locator('#panel-articles').isVisible()&&!await page.locator('#mobile-menu').evaluate(menu=>menu.open));
+    }
+  }
+  // Simulate future bindings at the network boundary; do not modify the user's real config.
+  const bound=structuredClone(siteConfig);
+  bound.profile.github='https://github.com/example';
+  bound.projects['skill-garden']={repository:'https://github.com/example/skill-garden',demo:'https://example.com/skill-garden'};
+  bound.skills['prompt-architect']='https://github.com/example/prompt-architect';
+  await page.route('**/public/site.config.js',route=>route.fulfill({contentType:'text/javascript',body:`export const siteConfig=${JSON.stringify(bound)};`}));
+  await page.goto(baseURL,{waitUntil:'networkidle'});
+  const repo=page.locator('#project-grid [data-repository="skill-garden"]');
+  check('Future repository binding produces correct real anchor',await repo.getAttribute('href')===bound.projects['skill-garden'].repository);
+  check('External repository link is protected',await repo.getAttribute('rel')==='noopener noreferrer'&&await repo.getAttribute('target')==='_blank');
+  check('Demo link binds independently',await page.locator('[data-demo-link="skill-garden"]').getAttribute('href')===bound.projects['skill-garden'].demo);
+  check('Profile link binds independently',await page.locator('#header-github [data-profile-link]').getAttribute('href')===bound.profile.github);
+  await choose('skills');
+  check('Skill repository binding works',await page.locator('#skills-grid [data-repository="prompt-architect"]').getAttribute('href')===bound.skills['prompt-architect']);
+  await page.unroute('**/public/site.config.js');
+  await page.goto(baseURL,{waitUntil:'networkidle'});
+  check('Real repository survives binding simulation',await page.locator('#project-grid [data-repository="skill-garden"]').getAttribute('href')===siteConfig.projects['skill-garden'].repository);
+  check('No JavaScript or local asset errors',errors.length===0);
+  check('No avatar requests across all panels',!assetRequests.some(url=>/avatar|portrait/i.test(url)));
+  await page.setViewportSize({width:390,height:900});
+  await page.locator('#menu-toggle').click();
+  await page.setViewportSize({width:600,height:900});
+  check('Mobile menu closes at new 600px desktop boundary',!await page.locator('#mobile-menu').evaluate(menu=>menu.open));
+  // Capture clean views with no leftover toast, focus rings or scrolled sticky headers.
+  for(const [panel,name] of [['products','home'],['skills','skills'],['articles','articles'],['about','about'],['connect','connect']]){
+    await page.setViewportSize({width:1440,height:1000});
+    await page.goto(`${baseURL}/#${panel}`,{waitUntil:'networkidle'});
+    await page.evaluate(async()=>{await document.fonts.ready;document.activeElement?.blur();scrollTo(0,0);});
+    await page.screenshot({path:screenshotPath(`${name}.png`),fullPage:true});
+    if(panel==='products')await page.screenshot({path:screenshotPath('preview.png'),fullPage:false});
+  }
+  await page.setViewportSize({width:390,height:900});
+  await page.goto(baseURL,{waitUntil:'networkidle'});
+  await page.evaluate(()=>{document.activeElement?.blur();scrollTo(0,0);});
+  await page.screenshot({path:screenshotPath('mobile.png'),fullPage:true});
+  console.log(JSON.stringify({passed:checks.length,checks,errors},null,2));
+}finally{await browser.close();}
