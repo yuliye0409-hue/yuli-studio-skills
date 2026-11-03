@@ -15,3 +15,15 @@ test('Y monogram and favicon share the same vector artwork',()=>{
   assert.equal(logo,favicon);
   assert.match(logo,/id="yuli-mark"/);
 });
+test('AI question notebook links point to the public project and website',()=>{
+  assert.equal(siteConfig.projects['ai-question-notebook'].repository,'https://github.com/yuliye0409-hue/ai-question-notebook');
+  assert.equal(siteConfig.projects['ai-question-notebook'].demo,'https://yuliye0409-hue.github.io/ai-question-notebook/');
+  assert.equal(projects.find(project=>project.id==='ai-question-notebook').status,'已上线');
+});
+test('Prompt-Tool provides extension download without claiming a web demo',()=>{
+  const binding=siteConfig.projects['prompt-tool'];
+  assert.equal(binding.repository,'https://github.com/yuliye0409-hue/Prompt-Tool');
+  assert.equal(binding.download,'https://github.com/yuliye0409-hue/Prompt-Tool/archive/refs/heads/main.zip');
+  assert.equal(binding.demo,null);
+  assert.equal(projects.find(project=>project.id==='prompt-tool').type,'浏览器扩展');
+});

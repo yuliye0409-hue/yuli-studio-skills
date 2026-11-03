@@ -100,6 +100,20 @@ export function filterSkills(items, category = 'all', query = '', saved = []) {
 // 项目地址与个人联系方式在 public/site.config.js 统一维护。
 export const projects = [
   {
+    id: 'ai-question-notebook', name: '问而知 · AI 使用笔记', title: '把提问中的陌生术语，留成自己的知识。',
+    description: '从真实提问中整理 AI 术语与相关技术名称解释，并把教程单独归档；每条笔记都经过独立确认。',
+    type: 'AI 知识笔记', status: '已上线', tags: ['AI Glossary', '逐条确认', 'GitHub Pages'], demo: 'question-notebook',
+    detail: '一份公开的 AI 术语与教程笔记。术语笔记和实践教程分开整理；内容不会因为问题里出现 AI 名称就自动收录。每条笔记单独征求推送许可，并另行确认本次提问结束。',
+    features: ['搜索 AI 术语、缩写与技术名称解释', '教程目录独立分类与检索', '每条笔记单独批准，结束确认另行取得', '仅同步已获准内容，不公开原始对话'],
+  },
+  {
+    id: 'prompt-tool', name: 'Prompt-Tool · 图像提示词', title: '在图片上停一停，把灵感说清楚。',
+    description: 'Chrome / Edge 扩展。下载并加载后，配置自己的 API Key，即可悬停网页图片，手动生成并分别复制中英文提示词。',
+    type: '浏览器扩展', status: '开源工具', tags: ['Chrome / Edge', 'Image to Prompt', '中英文输出'], demo: 'prompt-tool',
+    detail: 'Image Prompt Studio Universal Hover Edition。安装后刷新网页，鼠标停留图片约 700ms 打开悬浮窗；点击「生成此图提示词」才请求你配置的 API。网站里的动画只演示操作，不调用模型。',
+    features: ['下载 ZIP 并解压，在 Chrome / Edge 开发者模式下加载扩展目录', '在扩展设置中填写自己的 API Key、Base URL 和支持图片输入的模型', '悬停网页图片，手动点击生成提示词', '分别复制中文和英文结果；API 费用由所选服务商决定'],
+  },
+  {
     id: 'skill-garden', name: 'Yuli Studio', title: '给每一种创造力，一个栖身之处。',
     description: '一片属于自己的数字自留地。把做过的项目、顺手的 Skills 和值得记下的经验，认真地放在一起。',
     type: '个人网站', status: '当前项目', tags: ['Personal website', 'Skills', 'Open source'], demo: 'garden',

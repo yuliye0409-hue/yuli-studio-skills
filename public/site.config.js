@@ -15,6 +15,8 @@ export const siteConfig = {
   },
   projects: {
     'skill-garden': { repository: 'https://github.com/yuliye0409-hue/yuli-studio-skills', demo: 'https://yuliye0409-hue.github.io/yuli-studio-skills/' },
+    'ai-question-notebook': { repository: 'https://github.com/yuliye0409-hue/ai-question-notebook', demo: 'https://yuliye0409-hue.github.io/ai-question-notebook/' },
+    'prompt-tool': { repository: 'https://github.com/yuliye0409-hue/Prompt-Tool', demo: null, download: 'https://github.com/yuliye0409-hue/Prompt-Tool/archive/refs/heads/main.zip' },
     'creative-workbench': { repository: null, demo: null },
     'automation-kit': { repository: null, demo: null },
   },
