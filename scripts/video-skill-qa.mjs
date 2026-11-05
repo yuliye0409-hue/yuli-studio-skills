@@ -11,8 +11,9 @@ await fs.mkdir(output,{recursive:true});
 const browser=await chromium.launch({headless:true,...(process.env.BROWSER_CHANNEL?{channel:process.env.BROWSER_CHANNEL}:{})});
 const context=await browser.newContext({viewport:{width:1440,height:1000},reducedMotion:'reduce',permissions:['clipboard-read','clipboard-write'],acceptDownloads:true});
 const page=await context.newPage();
-const errors=[],checks=[];
+const errors=[],checks=[],assetRequests=[];
 page.on('pageerror',error=>errors.push(error.message));
+page.on('request',request=>{if(request.url().startsWith(baseURL))assetRequests.push(request.url());});
 page.on('response',response=>{if(response.url().startsWith(baseURL)&&response.status()>=400)errors.push(`${response.status()} ${response.url()}`);});
 function check(name,result){checks.push({name,passed:!!result});if(!result)throw new Error(`Failed: ${name}`);}
 async function capture(name){
@@ -25,14 +26,7 @@ try{
   await page.goto(`${baseURL}/#skills`,{waitUntil:'networkidle'});
   await page.evaluate(()=>document.fonts.ready);
   check('Published Skill is first in the Skills collection',await page.locator('.skill-card').first().getAttribute('data-skill-card')===skill.id);
-  check('Reduced motion starts the walkthrough paused',await page.locator('[data-video-toggle]').getAttribute('aria-pressed')==='false');
-  for(let step=0;step<4;step++){
-    await page.locator(`[data-video-step="${step}"]`).click();
-    check(`Manual step ${step+1} selects its frame and pauses`,await page.locator('[data-video-screen]').getAttribute('data-scene')===String(step)&&await page.locator('[data-video-toggle]').getAttribute('aria-pressed')==='false');
-  }
-  check('Final frame displays Chinese and English',await page.locator('.video-script-output').innerText().then(text=>text.includes('中文脚本')&&text.includes('ENGLISH')));
-  await page.locator('[data-video-step="2"]').click();
-  check('Storyboard exposes all eight fields',await page.locator('.video-fields small').count()===8);
+  check('Skill has no animation or playback controls',await page.locator('.video-skill-card .notebook-demo, [data-video-demo], [data-video-toggle], [data-video-replay]').count()===0);
   await capture('video-skill-desktop.png');
   const downloadPromise=page.waitForEvent('download');
   await page.locator('.video-skill-card [data-skill-download]').click();
@@ -50,41 +44,18 @@ try{
   check('New Skill is searchable',await page.locator('.skill-card').count()===1);
   await page.locator(`.video-skill-card [data-save="${skill.id}"]`).click();
   await page.locator('#filter-favorites').click();
-  check('Favorite rerender retains one functional player',await page.locator('[data-video-demo]').count()===1);
-  await page.locator('[data-video-step="3"]').click();
-  check('Remounted player responds after filtering and saving',await page.locator('[data-video-screen]').getAttribute('data-scene')==='3');
+  check('Skill remains usable after search and favorite filtering',await page.locator('.video-skill-card').isVisible()&&await page.locator(`.video-skill-card [data-save="${skill.id}"]`).getAttribute('aria-pressed')==='true'&&await page.locator('.video-skill-actions [data-skill-download]').isVisible());
   await page.locator('#search-input').fill('');
   await page.locator('#filter-all').click();
   for(const width of [320,390,600,768,960,1440]){
     await page.setViewportSize({width,height:1000});
     await page.locator('.video-skill-card').scrollIntoViewIfNeeded();
-    check(`Skill layout adapts at ${width}px`,await page.locator('.video-skill-card').evaluate(element=>getComputedStyle(element).gridTemplateColumns.split(' ').length)===(width<600?1:2));
-    for(let step=0;step<4;step++){
-      await page.locator(`[data-video-step="${step}"]`).click();
-      const fits=await page.evaluate(()=>{
-        const screen=document.querySelector('[data-video-screen]');
-        return document.documentElement.scrollWidth<=innerWidth&&screen.scrollWidth<=screen.clientWidth&&screen.scrollHeight<=screen.clientHeight;
-      });
-      check(`Frame ${step+1} fits at ${width}px`,fits);
-    }
+    check(`Standard Skills grid at ${width}px`,await page.locator('#skills-grid').evaluate(element=>getComputedStyle(element).gridTemplateColumns.split(' ').length)===(width<600?1:width<960?2:3));
+    check(`No empty demonstration column at ${width}px`,await page.locator('.video-skill-card').evaluate(element=>getComputedStyle(element).display==='flex'&&getComputedStyle(element).gridColumnStart==='auto'&&getComputedStyle(element).gridColumnEnd==='auto'));
+    check(`No overflow at ${width}px`,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&document.body.scrollWidth<=innerWidth));
     if(width===390)await capture('video-skill-mobile.png');
   }
-  await page.setViewportSize({width:1440,height:1000});
-  await page.emulateMedia({reducedMotion:'no-preference'});
-  await page.locator('[data-video-replay]').click();
-  check('Replay resets and starts animation',await page.locator('[data-video-screen]').getAttribute('data-scene')==='0'&&await page.locator('[data-video-toggle]').getAttribute('aria-pressed')==='true');
-  await page.waitForFunction(()=>document.querySelector('[data-video-screen]').dataset.scene==='1',null,{timeout:6500});
-  await page.locator('[data-video-toggle]').click();
-  check('Pause freezes selected frame',await page.locator('[data-video-toggle]').getAttribute('aria-pressed')==='false');
-  await page.locator('[data-video-toggle]').click();
-  await page.locator('#tab-products').click();
-  const hidden=await page.locator('[data-video-screen]').getAttribute('data-scene');
-  await page.waitForTimeout(4500);
-  check('Hidden Skill animation suspends',await page.locator('[data-video-screen]').getAttribute('data-scene')===hidden);
-  await page.locator('#tab-skills').click();
-  await page.emulateMedia({reducedMotion:'reduce'});
-  await page.waitForFunction(()=>document.querySelector('[data-video-toggle]').getAttribute('aria-pressed')==='false',null,{timeout:2000});
-  check('Reduced-motion change pauses the player',await page.locator('[data-video-toggle]').getAttribute('aria-pressed')==='false');
+  check('Removed animation module is not requested',!assetRequests.some(url=>url.includes('/video-script-demo.js')));
   check('No JavaScript or site asset errors',errors.length===0);
   console.log(JSON.stringify({passed:checks.length,checks,errors},null,2));
 }finally{await browser.close();}

@@ -3,7 +3,6 @@ import {siteConfig} from './public/site.config.js';
 import {externalURL,emailURL} from './public/links.js';
 import {mountNotebookDemo} from './public/notebook-demo.js';
 import {mountPromptToolDemo,promptToolStage} from './public/prompt-tool-demo.js';
-import {mountVideoScriptDemo,videoScriptDemo} from './public/video-script-demo.js';
 
 const paths={
   replay:'<path d="M3 10a9 9 0 1 1 2.6 8.4M3 3v7h7"/>',
@@ -29,7 +28,7 @@ const esc=value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;'
 const panels=['products','skills','articles','about','connect'];
 const motion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth';
 const dialog=$('#detail-dialog'),menu=$('#mobile-menu');
-let toastTimer,dialogTrigger=null,disposeVideoDemo;
+let toastTimer,dialogTrigger=null;
 function readStorage(key,fallback){try{return JSON.parse(localStorage.getItem(key))??fallback;}catch{return fallback;}}
 const stored=readStorage('skill-garden:saved',[]);
 const state={panel:'products',category:'all',query:'',saved:[...new Set(Array.isArray(stored)?stored.filter(id=>skills.some(skill=>skill.id===id)):[])],detail:null};
@@ -74,13 +73,11 @@ function renderFilters(){
 }
 function skillDownload(skill,className='text-link'){return `<a class="${className}" href="${esc(skill.source)}" download="SKILL.md" data-skill-download>下载 SKILL.md ${icon('arrow-down')}</a>`;}
 function videoSkillCard(skill,saved){
-  return `<article class="skill-card video-skill-card" data-skill-card="${skill.id}"><div class="video-skill-copy"><div class="skill-card-head"><span class="skill-symbol">${icon('play')}</span><span class="skill-number">SKILL / 已收录</span></div><p class="video-skill-eyebrow">${esc(skill.subtitle)} / SKILL.md</p><button type="button" class="card-main" data-open="${skill.id}" aria-label="查看技能：${esc(skill.title)}"><h3>${esc(skill.title)}</h3><p>${esc(skill.description)}</p></button><div class="card-tags">${skill.tags.map(tag=>`<span>${esc(tag)}</span>`).join('')}<span>中英双语</span></div><p class="video-skill-note">8 项镜头信息，一份清晰的拍摄思路。<br>从准备产品素材，到交付可复用脚本。</p><div class="video-skill-actions"><button type="button" class="button button-primary" data-open="${skill.id}">查看使用方法 ${icon('arrow-up-right')}</button>${skillDownload(skill,'button button-secondary')}</div><div class="card-bottom">${repoLink(siteConfig.skills[skill.id],{id:skill.id,className:'card-repo-link',label:'查看源码'})}<button type="button" class="icon-button ${saved?'saved':''}" data-save="${skill.id}" aria-label="${saved?'取消收藏':'收藏'}：${esc(skill.title)}" aria-pressed="${saved}">${icon('bookmark',saved)}</button></div></div>${videoScriptDemo(icon)}</article>`;
+  return `<article class="skill-card video-skill-card" data-skill-card="${skill.id}"><div class="skill-card-head"><span class="skill-symbol">${icon(skill.icon)}</span><span class="skill-number">SKILL / 已收录</span></div><button type="button" class="card-main" data-open="${skill.id}" aria-label="查看技能：${esc(skill.title)}"><span class="card-subtitle">${esc(skill.subtitle)}</span><h3>${esc(skill.title)}</h3><p>${esc(skill.description)}</p></button><div class="card-tags">${skill.tags.map(tag=>`<span>${esc(tag)}</span>`).join('')}<span>中英双语</span></div><div class="video-skill-actions"><button type="button" class="button button-primary" data-open="${skill.id}">查看使用方法 ${icon('arrow-up-right')}</button>${skillDownload(skill,'button button-secondary')}</div><div class="card-bottom">${repoLink(siteConfig.skills[skill.id],{id:skill.id,className:'card-repo-link',label:'查看源码'})}<button type="button" class="icon-button ${saved?'saved':''}" data-save="${skill.id}" aria-label="${saved?'取消收藏':'收藏'}：${esc(skill.title)}" aria-pressed="${saved}">${icon('bookmark',saved)}</button></div></article>`;
 }
 function renderSkills(){
-  disposeVideoDemo?.();
   const shown=filterSkills(skills,state.category,state.query,state.saved);
   $('#skills-grid').innerHTML=shown.map(skill=>{const saved=state.saved.includes(skill.id);if(skill.source)return videoSkillCard(skill,saved);return `<article class="skill-card"><div class="skill-card-head"><span class="skill-symbol">${icon(skill.icon)}</span><span class="skill-number">SKILL / ${String(skills.indexOf(skill)+1).padStart(2,'0')}</span></div><button type="button" class="card-main" data-open="${skill.id}" aria-label="查看技能：${esc(skill.title)}"><span class="card-subtitle">${esc(skill.subtitle)}</span><h3>${esc(skill.title)}</h3><p>${esc(skill.description)}</p></button><div class="card-tags">${skill.tags.map(tag=>`<span>${esc(tag)}</span>`).join('')}</div><div class="card-bottom">${repoLink(siteConfig.skills[skill.id],{id:skill.id,className:'card-repo-link',label:'查看源码'})}<button type="button" class="icon-button ${saved?'saved':''}" data-save="${skill.id}" aria-label="${saved?'取消收藏':'收藏'}：${esc(skill.title)}" aria-pressed="${saved}">${icon('bookmark',saved)}</button></div></article>`;}).join('');
-  disposeVideoDemo=mountVideoScriptDemo($('[data-video-demo]'));
   $('#empty-state').hidden=shown.length!==0;$('#result-count').textContent=`${String(shown.length).padStart(2,'0')} SKILL${shown.length===1?'':'S'}`;
   $('#result-description').textContent=state.query?`搜索「${state.query}」的结果`:state.category==='favorites'?'留给下一次灵感的收藏。':'好用的方法，随时取用。';
   $('#empty-state h3').textContent=state.category==='favorites'&&!state.query?'你的收藏，从这里开始。':'换个方向，也许就找到了。';
