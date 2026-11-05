@@ -61,6 +61,8 @@ Prompt-Tool 需在 Chrome / Edge 扩展管理页加载解压目录，并配置�
 
 ## 视频分镜脚本 Skill
 
+技能已发布至 [独立公开仓库](https://github.com/yuliye0409-hue/amazon-a-plus-video-script)。[v1.0.0 Release](https://github.com/yuliye0409-hue/amazon-a-plus-video-script/releases/tag/v1.0.0) 提供包含 `SKILL.md`、`agents/` 与 `references/` 的完整安装 ZIP；公开版本将内部技能名称规范为英文目录名，保留中文显示名称和脚本要求。[直达技能详情](https://yuliye0409-hue.github.io/yuli-studio-skills/?skill=amazon-a-plus-video-script#skills) 可直接分享。
+
 原文件保存在 `public/skills/amazon-a-plus-video-script/SKILL.md`，保持用户提供的内容。网站上的使用说明是单独的介绍，不改变 Skill 原文。可下载后按所用工具的自定义 Skill 机制添加，或直接复制详情中的原提示词，在支持图片的 AI 中附上产品图、真实卖点与画面描述。
 
 该 Skill 不附带动画展示。最终脚本应逐镜头核对八项字段后，再用于视频生成工具；本站不发起模型请求或视频生成。

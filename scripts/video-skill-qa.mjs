@@ -23,7 +23,9 @@ async function capture(name){
   await style.evaluate(element=>element.remove());
 }
 try{
-  await page.goto(`${baseURL}/#skills`,{waitUntil:'networkidle'});
+  await page.goto(`${baseURL}/?skill=${skill.id}#skills`,{waitUntil:'networkidle'});
+  check('Share link opens the Skill detail',await page.locator('#detail-dialog').evaluate(element=>element.open)&&await page.locator('#detail-title').textContent()===skill.title);
+  await page.keyboard.press('Escape');
   await page.evaluate(()=>document.fonts.ready);
   check('Published Skill is first in the Skills collection',await page.locator('.skill-card').first().getAttribute('data-skill-card')===skill.id);
   check('Skill has no animation or playback controls',await page.locator('.video-skill-card .notebook-demo, [data-video-demo], [data-video-toggle], [data-video-replay]').count()===0);
@@ -33,12 +35,13 @@ try{
   const download=await downloadPromise;
   check('Original SKILL.md downloads intact',download.suggestedFilename()==='SKILL.md'&&await fs.readFile(await download.path(),'utf8')===await fs.readFile(new URL(`../${skill.source.slice(2)}`,import.meta.url),'utf8'));
   await page.locator('.video-skill-actions [data-open]').click();
-  check('Real Skill detail is distinguished from samples',await page.locator('.detail-tags').textContent().then(text=>text.includes('已收录 Skill')&&!text.includes('示例技能')));
+  check('Real Skill detail is distinguished from samples',await page.locator('.detail-tags').textContent().then(text=>text.includes('已发布 Skill')&&!text.includes('示例技能')));
   await page.locator('#copy-prompt').click();
   await page.waitForFunction(()=>document.querySelector('#copy-prompt').textContent.includes('已复制'));
   // The Windows clipboard converts LF to CRLF; compare the full text after normalization.
   check('Copy writes the complete original prompt',(await page.evaluate(()=>navigator.clipboard.readText())).replaceAll('\r\n','\n')===skill.prompt);
-  check('Source link points at the published file',await page.locator('.detail-repository a').last().getAttribute('href')===`https://github.com/yuliye0409-hue/yuli-studio-skills/blob/master/${skill.source.slice(2)}`);
+  check('Source link points at the published repository',await page.locator('.detail-repository [data-repository]').getAttribute('href')==='https://github.com/yuliye0409-hue/amazon-a-plus-video-script');
+  check('Versioned ZIP download is available',await page.getByRole('link',{name:'下载技能 ZIP'}).getAttribute('href')===skill.download);
   await page.keyboard.press('Escape');
   await page.locator('#search-input').fill('视频分镜');
   check('New Skill is searchable',await page.locator('.skill-card').count()===1);
@@ -56,6 +59,8 @@ try{
     if(width===390)await capture('video-skill-mobile.png');
   }
   check('Removed animation module is not requested',!assetRequests.some(url=>url.includes('/video-script-demo.js')));
+  await page.goto(`${baseURL}/?skill=unknown#skills`,{waitUntil:'networkidle'});
+  check('Unknown share link does not open a dialog',!await page.locator('#detail-dialog').evaluate(element=>element.open));
   check('No JavaScript or site asset errors',errors.length===0);
   console.log(JSON.stringify({passed:checks.length,checks,errors},null,2));
 }finally{await browser.close();}

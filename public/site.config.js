@@ -21,7 +21,7 @@ export const siteConfig = {
     'automation-kit': { repository: null, demo: null },
   },
   skills: {
-    'amazon-a-plus-video-script': 'https://github.com/yuliye0409-hue/yuli-studio-skills',
+    'amazon-a-plus-video-script': 'https://github.com/yuliye0409-hue/amazon-a-plus-video-script',
     'prompt-architect': null,
     'visual-story': null,
     'idea-to-interface': null,
