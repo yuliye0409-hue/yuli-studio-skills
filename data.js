@@ -120,7 +120,7 @@ export const projects = [
     id: 'prompt-tool', name: 'Prompt-Tool · 图像提示词', title: '在图片上停一停，把灵感说清楚。',
     description: 'Chrome / Edge 扩展。下载并加载后，配置自己的 API Key，即可悬停网页图片，手动生成并分别复制中英文提示词。',
     type: '浏览器扩展', status: '开源工具', tags: ['Chrome / Edge', 'Image to Prompt', '中英文输出'], demo: 'prompt-tool',
-    detail: 'Image Prompt Studio Universal Hover Edition。安装后刷新网页，鼠标停留图片约 700ms 打开悬浮窗；点击「生成此图提示词」才请求你配置的 API。网站里的动画只演示操作，不调用模型。',
+    detail: 'Image Prompt Studio Universal Hover Edition。安装后刷新网页，鼠标停留图片约 700ms 打开悬浮窗；点击「生成此图提示词」才请求你配置的 API。请在安装扩展后使用这些功能。',
     features: ['下载 ZIP 并解压，在 Chrome / Edge 开发者模式下加载扩展目录', '在扩展设置中填写自己的 API Key、Base URL 和支持图片输入的模型', '悬停网页图片，手动点击生成提示词', '分别复制中文和英文结果；API 费用由所选服务商决定'],
   },
   {

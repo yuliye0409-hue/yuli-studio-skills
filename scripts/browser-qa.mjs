@@ -29,36 +29,10 @@ try{
   check('Five primary content tabs',await page.locator('.main-tab').count()===5);
   check('Products include both requested tools',await page.locator('#panel-products').isVisible()&&await page.locator('.project-card').count()===5&&await page.locator('[data-project-card="ai-question-notebook"] .project-name').textContent()==='问而知 · AI 使用笔记'&&await page.locator('[data-project-card="prompt-tool"] .project-name').textContent()==='Prompt-Tool · 图像提示词');
   check('Notebook project links to its real repository and live demo',await page.locator('#project-grid [data-repository="ai-question-notebook"]').getAttribute('href')===siteConfig.projects['ai-question-notebook'].repository&&await page.locator('#project-grid [data-demo-link="ai-question-notebook"]').getAttribute('href')===siteConfig.projects['ai-question-notebook'].demo);
-  check('Notebook walkthrough covers search, reading and tutorials',await page.locator('[data-notebook-step]').count()===4&&await page.locator('[data-notebook-step="2"]').textContent().then(text=>text.includes('阅读解释'))&&await page.locator('[data-notebook-step="3"]').textContent().then(text=>text.includes('切换教程')));
-  check('Reduced motion pauses autoplay and keeps content visible',await page.locator('[data-notebook-toggle]').getAttribute('aria-pressed')==='false'&&await page.locator('[data-notebook-step][aria-pressed=true]').count()===1&&await page.locator('[data-notebook-status]').textContent()==='01 / 04 · 搜索术语'&&await page.locator('.notebook-typed').evaluate(element=>getComputedStyle(element).maxWidth!=='0px'));
-  await page.locator('[data-notebook-replay]').click();
-  check('Notebook demo replay resets to the first step',await page.locator('[data-notebook-toggle]').getAttribute('aria-pressed')==='true'&&await page.locator('[data-notebook-step="0"]').getAttribute('aria-pressed')==='true');
-  await page.waitForFunction(()=>document.querySelector('[data-notebook-screen]').dataset.scene==='1',{},{timeout:6500});
-  check('Notebook demo advances through its workflow',await page.locator('[data-notebook-step="1"]').getAttribute('aria-pressed')==='true');
-  await page.locator('[data-notebook-toggle]').click();
-  const pausedScene=await page.locator('[data-notebook-screen]').getAttribute('data-scene');
-  await page.waitForTimeout(4500);
-  check('Pause freezes the walkthrough',await page.locator('[data-notebook-screen]').getAttribute('data-scene')===pausedScene&&await page.locator('[data-notebook-toggle]').getAttribute('aria-pressed')==='false');
-  await page.locator('[data-notebook-step="2"]').click();
-  check('Manual step opens the illustrated reader',await page.locator('.notebook-screen-reader h5').textContent()==='DESIGN.md 是什么？'&&await page.locator('[data-notebook-toggle]').getAttribute('aria-pressed')==='false');
-  await page.locator('[data-notebook-step="3"]').click();
-  check('Manual step shows the real SSH tutorial theme',await page.locator('.notebook-tutorial-heading').isVisible()&&await page.locator('[data-notebook-screen]').textContent().then(text=>text.includes('通过 SSH 用 Codex 访问另一台电脑')));
-  await page.locator('[data-notebook-step="0"]').click();
-  await page.evaluate(()=>document.activeElement?.blur());
-  await page.locator('.question-notebook-card').screenshot({path:screenshotPath('question-notebook-desktop.png')});
-  check('Notebook preview and animation sit side by side on desktop',await page.locator('.question-notebook-stage').evaluate(element=>getComputedStyle(element).gridTemplateColumns.split(' ').length===2));
+  check('Notebook retains its static cover',await page.locator('.question-notebook-stage .notebook-preview').count()===1&&await page.locator('.question-notebook-stage h4').textContent().then(text=>text.includes('多一点理解')));
   check('Extension has the real repository and a ZIP download',await page.locator('[data-repository="prompt-tool"]').getAttribute('href')===siteConfig.projects['prompt-tool'].repository&&await page.locator('[data-download-link="prompt-tool"]').getAttribute('href')===siteConfig.projects['prompt-tool'].download&&await page.locator('[data-demo-link="prompt-tool"]').count()===0);
-  check('Extension reduced-motion playback starts paused',await page.locator('[data-prompt-toggle]').getAttribute('aria-pressed')==='false');
-  await page.locator('[data-prompt-step="1"]').click();
-  check('Extension demo shows manual generation rather than auto requests',await page.locator('.prompt-generate').textContent()==='生成此图提示词'&&await page.locator('.prompt-mini-window').textContent().then(text=>text.includes('点击后才请求 API')));
-  await page.locator('[data-prompt-step="2"]').click();
-  check('Extension demo includes both languages',await page.locator('.prompt-output').textContent().then(text=>text.includes('中文提示词')&&text.includes('English Prompt')));
-  await page.locator('[data-prompt-step="3"]').click();
-  check('Extension demo identifies its fixed example and copy state',await page.locator('.prompt-copied').textContent()==='已复制 ✓'&&await page.locator('[data-prompt-demo] .notebook-demo-disclaimer').textContent().then(text=>text.includes('预设示例结果')));
-  await page.locator('[data-prompt-replay]').click();
-  check('Extension replay resets only its own player',await page.locator('[data-prompt-screen]').getAttribute('data-scene')==='0'&&await page.locator('[data-notebook-toggle]').getAttribute('aria-pressed')==='false');
-  await page.locator('[data-prompt-toggle]').click();
-  await page.locator('.prompt-tool-card').screenshot({path:screenshotPath('prompt-tool-desktop.png')});
+  check('Extension retains its static cover',await page.locator('.prompt-tool-stage .prompt-sample').count()===1&&await page.locator('.prompt-tool-stage h4').textContent().then(text=>text.includes('说出灵感')));
+  check('All projects and Skills omit walkthrough panels',await page.locator('#panel-products .notebook-demo, #panel-skills .notebook-demo, [data-notebook-demo], [data-prompt-demo], [data-video-demo], [data-notebook-toggle], [data-prompt-toggle], [data-video-toggle]').count()===0);
   await page.locator('[data-project="prompt-tool"]').click();
   check('Extension details explain installation and own API key',await page.locator('.detail-steps').textContent().then(text=>text.includes('加载扩展目录')&&text.includes('API Key')));
   await page.keyboard.press('Escape');
@@ -156,8 +130,8 @@ try{
     await choose('products');
     check(`Responsive column count at ${width}px`,await page.locator('.project-grid').evaluate(element=>getComputedStyle(element).gridTemplateColumns.split(' ').length)===(width<600?1:width<960?2:3));
     check(`Nav breakpoint at ${width}px`,await page.locator('#menu-toggle').isVisible()===(width<600));
-    check(`Notebook side-by-side layout adapts at ${width}px`,await page.locator('.question-notebook-stage').evaluate(element=>getComputedStyle(element).gridTemplateColumns.split(' ').length)===(width<600?1:2));
-    check(`Extension side-by-side layout adapts at ${width}px`,await page.locator('.prompt-tool-stage').evaluate(element=>getComputedStyle(element).gridTemplateColumns.split(' ').length)===(width<600?1:2));
+    check(`Notebook has no empty demo column at ${width}px`,await page.locator('.question-notebook-stage').evaluate(element=>getComputedStyle(element).display==='block')&&await page.locator('.question-notebook-card').evaluate(element=>getComputedStyle(element).gridColumnStart==='auto'&&getComputedStyle(element).gridColumnEnd==='auto'));
+    check(`Extension has no empty demo column at ${width}px`,await page.locator('.prompt-tool-stage').evaluate(element=>getComputedStyle(element).display==='block')&&await page.locator('.prompt-tool-card').evaluate(element=>getComputedStyle(element).gridColumnStart==='auto'&&getComputedStyle(element).gridColumnEnd==='auto'));
     if(width===390){
       await choose('products');await page.evaluate(()=>scrollTo(0,0));
       await page.screenshot({path:screenshotPath('mobile.png'),fullPage:true});
@@ -188,21 +162,13 @@ try{
   check('Real repository survives binding simulation',await page.locator('#project-grid [data-repository="skill-garden"]').getAttribute('href')===siteConfig.projects['skill-garden'].repository);
   check('No JavaScript or local asset errors',errors.length===0);
   check('No avatar requests across all panels',!assetRequests.some(url=>/avatar|portrait/i.test(url)));
-  const animatedPage=await context.newPage();
-  await animatedPage.emulateMedia({reducedMotion:'no-preference'});
-  await animatedPage.goto(`${baseURL}/#products`,{waitUntil:'networkidle'});
-  await animatedPage.locator('[data-notebook-demo]').scrollIntoViewIfNeeded();
-  check('Autoplay is enabled when reduced motion is off',await animatedPage.locator('[data-notebook-toggle]').getAttribute('aria-pressed')==='true');
-  await animatedPage.waitForFunction(()=>document.querySelector('[data-notebook-screen]').dataset.scene==='1',{},{timeout:6500});
-  check('Autoplay moves the illustrated cursor',await animatedPage.locator('.question-notebook-card .notebook-demo-cursor').isVisible());
-  await animatedPage.locator('#tab-skills').click();
-  const hiddenScene=await animatedPage.locator('[data-notebook-screen]').getAttribute('data-scene');
-  await animatedPage.waitForTimeout(4500);
-  check('Hidden products panel suspends the demo',await animatedPage.locator('[data-notebook-screen]').getAttribute('data-scene')===hiddenScene);
-  await animatedPage.emulateMedia({reducedMotion:'reduce'});
-  await animatedPage.waitForFunction(()=>document.querySelector('[data-notebook-toggle]').getAttribute('aria-pressed')==='false',{},{timeout:2000});
-  check('Changing reduced-motion preference stops playback',await animatedPage.locator('[data-notebook-toggle]').getAttribute('aria-pressed')==='false');
-  await animatedPage.close();
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  await choose('products');
+  check('Products have no player when motion is allowed',await page.locator('#panel-products [data-playing], #panel-products .notebook-demo').count()===0);
+  await choose('skills');
+  check('Skills have no player when motion is allowed',await page.locator('#panel-skills [data-playing], #panel-skills .notebook-demo').count()===0);
+  check('No walkthrough modules are requested',!assetRequests.some(url=>/\/(?:notebook-demo|prompt-tool-demo|video-script-demo)\.js/.test(url)));
+  await page.emulateMedia({reducedMotion:'reduce'});
   await page.setViewportSize({width:390,height:900});
   await page.locator('#menu-toggle').click();
   await page.setViewportSize({width:600,height:900});
@@ -216,11 +182,7 @@ try{
     if(panel==='products')await page.screenshot({path:screenshotPath('preview.png'),fullPage:false});
     if(panel==='products'){
       await page.locator('.question-notebook-card').screenshot({path:screenshotPath('question-notebook-desktop.png')});
-      for(const step of [1,2,3]){
-        await page.locator(`[data-notebook-step="${step}"]`).click();
-        await page.evaluate(()=>document.activeElement?.blur());
-        await page.locator('[data-notebook-demo]').screenshot({path:screenshotPath(`question-notebook-step-${step+1}.png`)});
-      }
+      await page.locator('.prompt-tool-card').screenshot({path:screenshotPath('prompt-tool-desktop.png')});
     }
   }
   await page.setViewportSize({width:390,height:900});
