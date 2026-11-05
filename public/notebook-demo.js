@@ -8,7 +8,7 @@ const scenes=[
 const labels=['搜索术语','打开笔记','阅读解释','切换教程'];
 const frameDuration=4200;
 
-export function mountNotebookDemo(root,{frames=scenes,stepLabels=labels,prefix='notebook'}={}){
+export function mountNotebookDemo(root,{frames=scenes,stepLabels=labels,prefix='notebook',description=prefix==='prompt'?'扩展操作演示':'笔记操作演示'}={}){
   if(!root)return;
   const screen=root.querySelector(`[data-${prefix}-screen]`);
   const steps=[...root.querySelectorAll(`[data-${prefix}-step]`)];
@@ -16,7 +16,8 @@ export function mountNotebookDemo(root,{frames=scenes,stepLabels=labels,prefix='
   const replay=root.querySelector(`[data-${prefix}-replay]`);
   const status=root.querySelector(`[data-${prefix}-status]`);
   const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
-  const description=prefix==='prompt'?'扩展操作演示':'笔记操作演示';
+  const controller=new AbortController();
+  const options={signal:controller.signal};
   let active=0,playing=!reducedMotion.matches,visible=false,timer;
 
   function renderScene(){
@@ -38,12 +39,13 @@ export function mountNotebookDemo(root,{frames=scenes,stepLabels=labels,prefix='
     if(!playing||!visible||document.hidden)return;
     timer=setTimeout(()=>{active=(active+1)%frames.length;renderScene();schedule();},frameDuration);
   }
-  toggle.addEventListener('click',()=>{playing=!playing;renderPlayback();schedule();});
-  replay.addEventListener('click',()=>{active=0;playing=true;renderScene();renderPlayback();schedule();});
-  steps.forEach((button,index)=>button.addEventListener('click',()=>{active=index;playing=false;renderPlayback();renderScene();schedule();}));
+  toggle.addEventListener('click',()=>{playing=!playing;renderPlayback();schedule();},options);
+  replay.addEventListener('click',()=>{active=0;playing=true;renderScene();renderPlayback();schedule();},options);
+  steps.forEach((button,index)=>button.addEventListener('click',()=>{active=index;playing=false;renderPlayback();renderScene();schedule();},options));
   const observer=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;schedule();});
   observer.observe(root);
-  document.addEventListener('visibilitychange',schedule);
-  reducedMotion.addEventListener('change',event=>{if(event.matches){playing=false;renderPlayback();schedule();}});
+  document.addEventListener('visibilitychange',schedule,options);
+  reducedMotion.addEventListener('change',event=>{if(event.matches){playing=false;renderPlayback();schedule();}},options);
   renderScene();renderPlayback();
+  return ()=>{clearTimeout(timer);observer.disconnect();controller.abort();};
 }

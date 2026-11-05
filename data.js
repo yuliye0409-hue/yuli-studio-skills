@@ -1,4 +1,4 @@
-// 编辑这里即可维护技能库。首批条目是演示内容，不代表个人履历或已发布作品。
+// 编辑这里即可维护技能库。带 source 的条目为已收录 Skill；其余条目为示例。
 export const categories = [
   { id: 'all', label: '全部技能' },
   { id: 'ai', label: 'AI & 自动化' },
@@ -8,6 +8,16 @@ export const categories = [
 ];
 
 export const skills = [
+  {
+    id: 'amazon-a-plus-video-script', category: 'design', title: '视频分镜脚本编写', subtitle: 'Video Storyboard',
+    description: '把产品图、卖点与场景，整理成可用于 AI 视频生成的中英双语分镜脚本。',
+    tags: ['视频分镜', '亚马逊视频'], color: 'stone', art: 'storyboard', icon: 'play',
+    source: './public/skills/amazon-a-plus-video-script/SKILL.md',
+    overview: '面向亚马逊产品视频的脚本编写 Skill。提供产品图、对应卖点和简单的画面描述，由支持图片的 AI 按八项字段编写中文与英文分镜：镜头、时长、对应素材、画面内容、镜头动作、提示词、转场建议、适配音频。',
+    steps: ['下载 SKILL.md，在支持自定义 Skill 的工具中按该工具的方式添加；也可直接复制下方提示词使用。', '附上产品图片，说明真实卖点，并写一段简单的画面描述。', '让支持图片的 AI 根据材料，逐镜头输出八项字段，各提供中文和英文版本。', '核对产品外观、卖点和镜头衔接，再把确认后的脚本用于 AI 视频生成工具。'],
+    prompt: '你是一位视频脚本编写大师，我会给你提供产品图以及对应的卖点和简单的画面描述，你可以根据我提供的内容，为我通过高转化的亚马逊视频脚本，用于AI视频大模型生成，请你按照以下逻辑进行编写，一份中文一份英文：\n镜头:\n时长:\n对应素材:\n画面内容:\n镜头动作:\n提示词:\n转场建议:\n适配音频：\n请你确保脚本可用于AI视频生成，视频流程呈现，并可作为亚马逊高转化视频',
+    takeaway: '先把每一镜说清楚，再让画面动起来。',
+  },
   {
     id: 'prompt-architect', category: 'ai', title: '把想法，说清楚', subtitle: 'Prompt Architect',
     description: '把模糊的一句话，变成 AI 能听懂、能执行的好提示词。',

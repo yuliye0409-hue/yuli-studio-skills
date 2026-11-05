@@ -554,4 +554,51 @@ dialog::backdrop{background:color-mix(in srgb,var(--ink) 32%,transparent)}
  .project-meta>span:first-child{font-size:9px}.project-name{font-size:23px}.category-filter{font-size:10px}
  .closing-band{padding:28px 24px}.closing-band h2{font-size:25px}.closing-code{padding:16px;font-size:11px}
 }
+/* Published Skill: source and guide beside a small, local walkthrough. */
+.video-skill-card{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);padding:0;overflow:hidden}
+.video-skill-copy{display:flex;flex-direction:column;min-width:0;padding:32px}
+.video-skill-copy .skill-card-head{margin-bottom:24px}
+.video-skill-eyebrow{font:400 10px/20px var(--font-mono);color:var(--muted);margin-bottom:8px}
+.video-skill-copy .card-main h3{font-size:28px;line-height:1.4;letter-spacing:-.96px;margin-bottom:16px}
+.video-skill-copy .card-main p{max-width:390px;font-size:14px;line-height:26px;min-height:0}
+.video-skill-copy .card-tags{margin-top:20px}
+.video-skill-note{margin-top:20px;font-size:12px;line-height:22px;color:var(--muted)}
+.video-skill-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px;margin-bottom:24px}
+.video-skill-actions .button{min-height:40px;padding:9px 15px;font-size:12px;gap:8px}
+.video-skill-copy .card-bottom{margin-top:auto;padding-top:16px}
+.video-script-demo{padding:28px;justify-content:center}
+.video-script-demo .notebook-demo-screen{height:290px;margin-top:20px;padding:18px}
+.video-script-demo .notebook-demo-steps button{font-size:10px;min-height:36px}
+.video-script-demo .notebook-demo-disclaimer{font-size:10px;line-height:18px}
+.video-scene{height:100%;animation:notebook-select .45s ease both}
+.video-scene-top{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font:400 9px/16px var(--font-mono);padding-bottom:12px;border-bottom:1px solid var(--hairline)}
+.video-product{height:150px;margin-top:12px;animation:video-product-reveal 1.4s ease both}
+.video-file{display:flex;align-items:center;justify-content:space-between;font-size:11px;margin-top:10px;gap:10px}
+.video-file>span:last-child{color:var(--body)}
+.video-caption{font-size:10px;line-height:18px;color:var(--muted);margin-top:10px}
+.video-brief{display:grid;gap:8px;padding-top:16px}
+.video-brief>small,.video-fields small,.video-script-output small{font:400 9px/16px var(--font-mono);color:var(--muted)}
+.video-brief>p{padding:8px 10px;background:var(--canvas);border:1px solid var(--hairline);border-radius:var(--radius-xs);font-size:12px;line-height:20px}
+.video-type{animation:notebook-select .8s ease both}
+.video-language{display:flex;gap:8px}.video-language>span{padding:4px 10px;background:var(--ink);color:var(--canvas);border-radius:var(--radius-xs);font-size:10px}
+.video-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px;padding-top:14px}
+.video-fields>div{min-width:0;padding-bottom:7px;border-bottom:1px solid var(--hairline);animation:notebook-select .6s ease both}
+.video-fields p{font-size:11px;line-height:18px;margin-top:3px}
+.video-script-output{display:grid;gap:10px;padding-top:12px}
+.video-script-output>div{padding:10px 12px;background:var(--canvas);border:1px solid var(--hairline);border-radius:var(--radius-xs)}
+.video-script-output p{font-size:11px;line-height:19px;margin-top:5px}
+.video-script-output span{display:block;font:400 8px/16px var(--font-mono);color:var(--muted);margin-top:4px}
+@keyframes video-product-reveal{from{opacity:.4;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+@media(max-width:959px){
+ .video-skill-copy{padding:24px}.video-script-demo{padding:22px 18px}
+ .video-skill-copy .card-main h3{font-size:24px}.video-script-demo .notebook-demo-screen{height:318px;padding:14px}
+ .video-script-demo .notebook-demo-head h4{font-size:14px}.video-script-demo .notebook-demo-steps button{font-size:9px}
+}
+@media(max-width:599px){
+ .video-skill-card{grid-template-columns:minmax(0,1fr);padding:0}.video-skill-copy{padding:24px}
+ .video-script-demo{padding:24px 18px}.video-script-demo .notebook-demo-screen{height:318px}
+ .video-skill-copy .card-main h3{font-size:26px}.video-skill-actions{gap:8px}.video-skill-actions .button{font-size:11px;padding-inline:12px}
+ .video-skill-note{font-size:12px}.video-script-demo .notebook-demo-disclaimer{font-size:9px}
+}
+@media(max-width:359px){.video-skill-copy{padding:22px}.video-script-demo{padding-inline:16px}.video-script-demo .notebook-demo-head h4{font-size:12px}.video-script-demo .notebook-demo-screen{height:350px}.video-fields{gap:10px}.video-script-output p{font-size:10px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}}

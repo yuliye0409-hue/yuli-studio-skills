@@ -26,7 +26,8 @@ test('verified owner and website are bound, while sample slots remain unbound',(
   assert.equal(externalURL(siteConfig.projects['skill-garden'].repository,{repository:true}),siteConfig.projects['skill-garden'].repository);
   assert.equal(externalURL(siteConfig.projects['skill-garden'].demo),siteConfig.projects['skill-garden'].demo);
   for(const key of ['creative-workbench','automation-kit'])assert.deepEqual(siteConfig.projects[key],{repository:null,demo:null});
-  Object.values(siteConfig.skills).forEach(value=>assert.equal(value,null));
+  skills.filter(skill=>!skill.source).forEach(skill=>assert.equal(siteConfig.skills[skill.id],null));
+  assert.equal(siteConfig.skills['amazon-a-plus-video-script'],siteConfig.projects['skill-garden'].repository);
 });
 test('sample articles are explicitly drafts without invented publish dates',()=>{
   assert.equal(articles.length,3);

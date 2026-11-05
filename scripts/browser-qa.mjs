@@ -98,7 +98,7 @@ try{
   check('Project details identify sample status',await page.locator('#detail-dialog').evaluate(dialog=>dialog.open)&&await page.locator('.detail-demo-note').textContent().then(text=>text.includes('示例')));
   await page.keyboard.press('Escape');
   await choose('skills');
-  check('Skills tab and hash routing',await page.locator('.skill-card').count()===8&&page.url().endsWith('#skills'));
+  check('Skills tab and hash routing',await page.locator('.skill-card').count()===9&&page.url().endsWith('#skills'));
   await page.locator('#filter-ai').click();
   check('AI category filter',await page.locator('.skill-card').count()===3);
   await page.locator('#filter-all').click();
