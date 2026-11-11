@@ -9,15 +9,15 @@ export const categories = [
 
 export const skills = [
   {
-    id: 'amazon-a-plus-video-script', category: 'design', title: '视频分镜脚本编写', subtitle: 'Video Storyboard',
-    description: '把产品图、卖点与场景，整理成可用于 AI 视频生成的中英双语分镜脚本。',
-    tags: ['视频分镜', '亚马逊视频'], color: 'stone', art: 'storyboard', icon: 'play',
-    source: './public/skills/amazon-a-plus-video-script/SKILL.md',
-    download: 'https://github.com/yuliye0409-hue/amazon-a-plus-video-script/releases/download/v1.0.0/amazon-a-plus-video-script-v1.0.0.zip',
-    overview: '面向亚马逊产品视频的脚本编写 Skill。提供产品图、对应卖点和简单的画面描述，由支持图片的 AI 按八项字段编写中文与英文分镜：镜头、时长、对应素材、画面内容、镜头动作、提示词、转场建议、适配音频。',
-    steps: ['下载 SKILL.md，在支持自定义 Skill 的工具中按该工具的方式添加；也可直接复制下方提示词使用。', '附上产品图片，说明真实卖点，并写一段简单的画面描述。', '让支持图片的 AI 根据材料，逐镜头输出八项字段，各提供中文和英文版本。', '核对产品外观、卖点和镜头衔接，再把确认后的脚本用于 AI 视频生成工具。'],
-    prompt: '你是一位视频脚本编写大师，我会给你提供产品图以及对应的卖点和简单的画面描述，你可以根据我提供的内容，为我通过高转化的亚马逊视频脚本，用于AI视频大模型生成，请你按照以下逻辑进行编写，一份中文一份英文：\n镜头:\n时长:\n对应素材:\n画面内容:\n镜头动作:\n提示词:\n转场建议:\n适配音频：\n请你确保脚本可用于AI视频生成，视频流程呈现，并可作为亚马逊高转化视频',
-    takeaway: '先把每一镜说清楚，再让画面动起来。',
+    id: 'office-keyboard-mouse-tvc', category: 'design', title: '办公键鼠完整 TVC 策划', subtitle: 'Office Keyboard & Mouse TVC',
+    description: '先完成 TVC 方案与九宫格制作规范，回传成图后，再编写视频脚本与英文提示词。',
+    tags: ['TVC 策划', '九宫格分镜'], color: 'stone', art: 'storyboard', icon: 'play',
+    source: './public/skills/office-keyboard-mouse-tvc/SKILL.md',
+    download: './public/skills/office-keyboard-mouse-tvc.zip',
+    overview: '为办公键盘、鼠标及套装策划完整品牌片。先根据产品素材与真实卖点交付 TVC 方案、分段时间轴和九宫格制作规范；完成版九宫格回传后，实际读图、核对板号与格位，再编写对应的视频脚本、英文提示词与剪辑连接。默认仅同期音和音效，无 BGM、旁白或对白。',
+    steps: ['下载完整技能 ZIP，解压后保留 SKILL.md、agents 与 references 的目录关系，按所用 AI 工具的 Skill 机制导入整个目录。', '提供清晰产品图、按优先级排列的真实卖点、片长与画幅要求，先获得 TVC 方案和九宫格制作规范。', '按规范制作并回传完成版九宫格，让 AI 先实际读图，核对版本、板号、格位与产品状态。', '基于回传成图编写视频脚本与英文提示词，再进行图生视频及后期剪辑；功能、参数和成片效果分别核验。'],
+    prompt: '使用 $office-keyboard-mouse-tvc，为我的办公键盘、鼠标或套装策划完整 TVC。\n\n产品图：已附\n品牌与型号：[填写]\n真实核心卖点（按优先级）：[填写]\n功能与参数依据：[说明书 / 规格表 / 测试资料；缺少时标注待确认]\n目标市场与片长：[填写]\n画幅与视觉气质：[填写]\n\n请先交付 TVC 方案、分段时间轴、九宫格制作规范、图像提示词和跨板连接意图。本轮不提前编写视频生成提示词。\n我制作并回传完成版九宫格后，请先实际读图，再根据真实文件、版本、板号与格位编写相对应的视频脚本与英文提示词。\n仅同期音、环境声与音效，无 BGM、旁白、对白；禁叠化、溶解、淡入淡出。缺少依据的功能与参数不要补造。',
+    takeaway: '先让产品事实与画面成立，再让九宫格动起来。',
   },
   {
     id: 'prompt-architect', category: 'ai', title: '把想法，说清楚', subtitle: 'Prompt Architect',

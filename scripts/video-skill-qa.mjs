@@ -33,17 +33,19 @@ try{
   const downloadPromise=page.waitForEvent('download');
   await page.locator('.video-skill-card [data-skill-download]').click();
   const download=await downloadPromise;
-  check('Original SKILL.md downloads intact',download.suggestedFilename()==='SKILL.md'&&await fs.readFile(await download.path(),'utf8')===await fs.readFile(new URL(`../${skill.source.slice(2)}`,import.meta.url),'utf8'));
+  check('Complete Skill ZIP downloads intact',download.suggestedFilename()===`${skill.id}.zip`&&(await fs.readFile(await download.path())).equals(await fs.readFile(new URL(`../${skill.download.slice(2)}`,import.meta.url))));
+  check('Marked old Skill card is removed',await page.locator('[data-skill-card="amazon-a-plus-video-script"]').count()===0&&!await page.locator('#skills-grid').textContent().then(text=>text.includes('Video Storyboard')));
   await page.locator('.video-skill-actions [data-open]').click();
   check('Real Skill detail is distinguished from samples',await page.locator('.detail-tags').textContent().then(text=>text.includes('已发布 Skill')&&!text.includes('示例技能')));
   await page.locator('#copy-prompt').click();
   await page.waitForFunction(()=>document.querySelector('#copy-prompt').textContent.includes('已复制'));
   // The Windows clipboard converts LF to CRLF; compare the full text after normalization.
   check('Copy writes the complete original prompt',(await page.evaluate(()=>navigator.clipboard.readText())).replaceAll('\r\n','\n')===skill.prompt);
-  check('Source link points at the published repository',await page.locator('.detail-repository [data-repository]').getAttribute('href')==='https://github.com/yuliye0409-hue/amazon-a-plus-video-script');
-  check('Versioned ZIP download is available',await page.getByRole('link',{name:'下载技能 ZIP'}).getAttribute('href')===skill.download);
+  check('Source link points at the site repository',await page.locator('.detail-repository [data-repository]').getAttribute('href')==='https://github.com/yuliye0409-hue/yuli-studio-skills');
+  check('Complete ZIP and raw SKILL.md are available',await page.getByRole('link',{name:'下载完整技能 ZIP'}).last().getAttribute('href')===skill.download&&await page.getByRole('link',{name:'查看 SKILL.md'}).getAttribute('href')===skill.source);
+  check('Install guide keeps the complete directory',await page.locator('.detail-steps').textContent().then(text=>text.includes('references')&&text.includes('整个目录')));
   await page.keyboard.press('Escape');
-  await page.locator('#search-input').fill('视频分镜');
+  await page.locator('#search-input').fill('办公键鼠');
   check('New Skill is searchable',await page.locator('.skill-card').count()===1);
   await page.locator(`.video-skill-card [data-save="${skill.id}"]`).click();
   await page.locator('#filter-favorites').click();

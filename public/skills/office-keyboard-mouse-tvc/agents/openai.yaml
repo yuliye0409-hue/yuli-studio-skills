@@ -1,0 +1,4 @@
+interface:
+  display_name: "办公键鼠完整 TVC 策划"
+  short_description: "先交付完整TVC与九宫格制作规范，完成版回传后再逐格编写视频脚本与提示词"
+  default_prompt: "使用 $office-keyboard-mouse-tvc，先根据我的产品素材交付完整TVC方案与对应九宫格制作规范；等我回传完成版九宫格后，先读图，再按实际板号、格号和版本编写逐镜视频脚本与英文提示词。"

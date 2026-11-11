@@ -27,8 +27,10 @@ test('verified owner and website are bound, while sample slots remain unbound',(
   assert.equal(externalURL(siteConfig.projects['skill-garden'].demo),siteConfig.projects['skill-garden'].demo);
   for(const key of ['creative-workbench','automation-kit'])assert.deepEqual(siteConfig.projects[key],{repository:null,demo:null});
   skills.filter(skill=>!skill.source).forEach(skill=>assert.equal(siteConfig.skills[skill.id],null));
-  assert.equal(siteConfig.skills['amazon-a-plus-video-script'],'https://github.com/yuliye0409-hue/amazon-a-plus-video-script');
-  assert.equal(externalURL(skills.find(skill=>skill.source).download),'https://github.com/yuliye0409-hue/amazon-a-plus-video-script/releases/download/v1.0.0/amazon-a-plus-video-script-v1.0.0.zip');
+  assert.equal(siteConfig.skills['office-keyboard-mouse-tvc'],siteConfig.projects['skill-garden'].repository);
+  assert.equal(Object.hasOwn(siteConfig.skills,'amazon-a-plus-video-script'),false);
+  const download=new URL(skills.find(skill=>skill.source).download,siteConfig.projects['skill-garden'].demo);
+  assert.equal(download.href,'https://yuliye0409-hue.github.io/yuli-studio-skills/public/skills/office-keyboard-mouse-tvc.zip');
 });
 test('sample articles are explicitly drafts without invented publish dates',()=>{
   assert.equal(articles.length,3);
