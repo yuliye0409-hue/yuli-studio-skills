@@ -2,9 +2,9 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {skills,categories,workflows,filterSkills} from '../data.js';
 
-test('one published Skill and eight samples have unique IDs and complete content',()=>{
-  assert.equal(skills.length,9);
-  assert.equal(skills.filter(skill=>skill.source).length,1);
+test('two published Skills and eight samples have unique IDs and complete content',()=>{
+  assert.equal(skills.length,10);
+  assert.equal(skills.filter(skill=>skill.source).length,2);
   assert.equal(skills.filter(skill=>!skill.source).length,8);
   assert.equal(new Set(skills.map(skill=>skill.id)).size,skills.length);
   for(const skill of skills){
@@ -15,9 +15,9 @@ test('one published Skill and eight samples have unique IDs and complete content
   }
 });
 test('category filtering returns expected records',()=>{
-  assert.equal(filterSkills(skills).length,9);
+  assert.equal(filterSkills(skills).length,10);
   assert.equal(filterSkills(skills,'ai').length,3);
-  assert.equal(filterSkills(skills,'design').length,3);
+  assert.equal(filterSkills(skills,'design').length,4);
   assert.equal(filterSkills(skills,'dev').length,2);
   assert.equal(filterSkills(skills,'productivity').length,1);
 });
@@ -32,7 +32,7 @@ test('favorites and search are combined without modifying the input',()=>{
   assert.equal(filterSkills(skills,'favorites','',saved).length,2);
   assert.equal(filterSkills(skills,'favorites','视觉',saved).length,1);
   assert.equal(filterSkills(skills,'favorites').length,0);
-  assert.equal(skills.length,9);
+  assert.equal(skills.length,10);
 });
 test('all workflow steps resolve to existing skills',()=>{
   assert.equal(workflows.length,3);

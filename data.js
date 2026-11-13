@@ -20,6 +20,18 @@ export const skills = [
     takeaway: '先让产品事实与画面成立，再让九宫格动起来。',
   },
   {
+    id: 'copywriting-master', category: 'design', title: '文案策划大师', subtitle: 'Localized Copywriting',
+    description: '把图片中的产品卖点改写成目标市场的本土化文案，并输出保留原图视觉的改图提示词。',
+    tags: ['文案本地化', '图片改字'], color: 'stone', art: 'prompt', icon: 'pen-tool', languageTag: '多市场适配',
+    source: './public/skills/copywriting-master/SKILL.md',
+    download: './public/skills/copywriting-master.zip',
+    overview: '针对图片中的产品卖点，按目标市场语境提供痛点解决型、行动号召型、情感共鸣型三种文案，再规划文字位置、字体风格与视觉层级，最终输出可复制的图片修改提示词。核心约束是保留原图视觉元素和产品自带 Logo，只修改文案，不新增其他 Logo。',
+    steps: ['下载原始技能 ZIP，解压后将 SKILL.md 放入独立的「文案策划大师」目录，按所用 AI 工具的 Skill 机制导入。', '上传原图，说明目标国家、输出语言、产品卖点及需要保留的品牌信息。', '获取痛点解决、行动号召、情感共鸣三种文案，以及文字位置、字体风格和视觉引导建议。', '复制图片修改提示词用于支持参考图的图像工具，核对原图视觉保持、文案准确性与字体商用许可。'],
+    prompt: '请使用「文案策划大师」Skill，处理我上传图片中的产品卖点文案。\n\n参考图：已附\n产品与真实卖点：[填写]\n目标国家或市场：[填写]\n文案语言：[填写]\n必须保留的信息：[品牌名 / 产品型号 / 其他]\n\n请提供：\n1. 痛点解决型、行动号召型、情感共鸣型三种本土化文案。\n2. 基于原图的文字位置、字体风格和视觉层级建议。\n3. 一段可直接复制的图片修改提示词，格式为「约束保留参考图内容不变 + 排版策略 + 文案植入区域及内容」。\n\n只修改文案，保留参考图视觉元素和产品自带 Logo，不新增其他 Logo；连续处理的图片保持字体一致，并核实字体商用许可。',
+    takeaway: '让卖点说当地人的话，让文字留在合适的位置。',
+    note: '下载包为用户提供的原始 ZIP，仅含 SKILL.md，无 agents 或 references 配套文件。解压后请放入独立技能目录。本站提供介绍与下载，不直接执行模型调用。',
+  },
+  {
     id: 'prompt-architect', category: 'ai', title: '把想法，说清楚', subtitle: 'Prompt Architect',
     description: '把模糊的一句话，变成 AI 能听懂、能执行的好提示词。',
     tags: ['提示词工程', '结构化表达'], color: 'sage', art: 'prompt', icon: 'sparkles', featured: true,

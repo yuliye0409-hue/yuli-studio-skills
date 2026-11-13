@@ -19,7 +19,7 @@ function check(name,result){checks.push({name,passed:!!result});if(!result)throw
 async function capture(name){
   await page.evaluate(()=>document.activeElement?.blur());
   const style=await page.addStyleTag({content:'.site-header,.skip-link,.reading-progress,#toast{visibility:hidden}'});
-  await page.locator('.video-skill-card').screenshot({path:fileURLToPath(new URL(name,output))});
+  await page.locator('[data-skill-card="office-keyboard-mouse-tvc"]').screenshot({path:fileURLToPath(new URL(name,output))});
   await style.evaluate(element=>element.remove());
 }
 try{
@@ -28,14 +28,14 @@ try{
   await page.keyboard.press('Escape');
   await page.evaluate(()=>document.fonts.ready);
   check('Published Skill is first in the Skills collection',await page.locator('.skill-card').first().getAttribute('data-skill-card')===skill.id);
-  check('Skill has no animation or playback controls',await page.locator('.video-skill-card .notebook-demo, [data-video-demo], [data-video-toggle], [data-video-replay]').count()===0);
+  check('Skill has no animation or playback controls',await page.locator('[data-skill-card="office-keyboard-mouse-tvc"] .notebook-demo, [data-video-demo], [data-video-toggle], [data-video-replay]').count()===0);
   await capture('video-skill-desktop.png');
   const downloadPromise=page.waitForEvent('download');
-  await page.locator('.video-skill-card [data-skill-download]').click();
+  await page.locator('[data-skill-card="office-keyboard-mouse-tvc"] [data-skill-download]').click();
   const download=await downloadPromise;
   check('Complete Skill ZIP downloads intact',download.suggestedFilename()===`${skill.id}.zip`&&(await fs.readFile(await download.path())).equals(await fs.readFile(new URL(`../${skill.download.slice(2)}`,import.meta.url))));
   check('Marked old Skill card is removed',await page.locator('[data-skill-card="amazon-a-plus-video-script"]').count()===0&&!await page.locator('#skills-grid').textContent().then(text=>text.includes('Video Storyboard')));
-  await page.locator('.video-skill-actions [data-open]').click();
+  await page.locator('[data-skill-card="office-keyboard-mouse-tvc"] .video-skill-actions [data-open]').click();
   check('Real Skill detail is distinguished from samples',await page.locator('.detail-tags').textContent().then(text=>text.includes('已发布 Skill')&&!text.includes('示例技能')));
   await page.locator('#copy-prompt').click();
   await page.waitForFunction(()=>document.querySelector('#copy-prompt').textContent.includes('已复制'));
@@ -47,16 +47,16 @@ try{
   await page.keyboard.press('Escape');
   await page.locator('#search-input').fill('办公键鼠');
   check('New Skill is searchable',await page.locator('.skill-card').count()===1);
-  await page.locator(`.video-skill-card [data-save="${skill.id}"]`).click();
+  await page.locator(`[data-skill-card="office-keyboard-mouse-tvc"] [data-save="${skill.id}"]`).click();
   await page.locator('#filter-favorites').click();
-  check('Skill remains usable after search and favorite filtering',await page.locator('.video-skill-card').isVisible()&&await page.locator(`.video-skill-card [data-save="${skill.id}"]`).getAttribute('aria-pressed')==='true'&&await page.locator('.video-skill-actions [data-skill-download]').isVisible());
+  check('Skill remains usable after search and favorite filtering',await page.locator('[data-skill-card="office-keyboard-mouse-tvc"]').isVisible()&&await page.locator(`[data-skill-card="office-keyboard-mouse-tvc"] [data-save="${skill.id}"]`).getAttribute('aria-pressed')==='true'&&await page.locator('.video-skill-actions [data-skill-download]').isVisible());
   await page.locator('#search-input').fill('');
   await page.locator('#filter-all').click();
   for(const width of [320,390,600,768,960,1440]){
     await page.setViewportSize({width,height:1000});
-    await page.locator('.video-skill-card').scrollIntoViewIfNeeded();
+    await page.locator('[data-skill-card="office-keyboard-mouse-tvc"]').scrollIntoViewIfNeeded();
     check(`Standard Skills grid at ${width}px`,await page.locator('#skills-grid').evaluate(element=>getComputedStyle(element).gridTemplateColumns.split(' ').length)===(width<600?1:width<960?2:3));
-    check(`No empty demonstration column at ${width}px`,await page.locator('.video-skill-card').evaluate(element=>getComputedStyle(element).display==='flex'&&getComputedStyle(element).gridColumnStart==='auto'&&getComputedStyle(element).gridColumnEnd==='auto'));
+    check(`No empty demonstration column at ${width}px`,await page.locator('[data-skill-card="office-keyboard-mouse-tvc"]').evaluate(element=>getComputedStyle(element).display==='flex'&&getComputedStyle(element).gridColumnStart==='auto'&&getComputedStyle(element).gridColumnEnd==='auto'));
     check(`No overflow at ${width}px`,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&document.body.scrollWidth<=innerWidth));
     if(width===390)await capture('video-skill-mobile.png');
   }
