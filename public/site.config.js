@@ -23,6 +23,7 @@ export const siteConfig = {
   skills: {
     'office-keyboard-mouse-tvc': 'https://github.com/yuliye0409-hue/yuli-studio-skills',
     'copywriting-master': 'https://github.com/yuliye0409-hue/yuli-studio-skills',
+    'amazon-keyboard-video-v8': 'https://github.com/yuliye0409-hue/yuli-studio-skills',
     'prompt-architect': null,
     'visual-story': null,
     'idea-to-interface': null,

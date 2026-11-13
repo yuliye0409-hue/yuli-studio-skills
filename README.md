@@ -10,6 +10,8 @@
 
 ## 在线访问与跨设备编辑
 
+已收录「分镜脚本编写」Skill（v8）：为亚马逊美区键鼠编写真人场景与纯视觉卖点分镜，输出垂直字段列表、英文提示词和镜头衔接方案。详情入口：`?skill=amazon-keyboard-video-v8#skills`。原始 ZIP 与其中的 `SKILL.md` 均原样发布；解压后将文件放入 `amazon-keyboard-video-v8/` 独立目录，内部调用名为 `$amazon-keyboard-video-v8`。生成结果仍需实际验收。
+
 - 网站：https://yuliye0409-hue.github.io/yuli-studio-skills/
 - 源码：https://github.com/yuliye0409-hue/yuli-studio-skills
 - 浏览器编辑器：https://github.dev/yuliye0409-hue/yuli-studio-skills

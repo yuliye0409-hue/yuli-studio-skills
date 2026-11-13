@@ -32,6 +32,18 @@ export const skills = [
     note: '下载包为用户提供的原始 ZIP，仅含 SKILL.md，无 agents 或 references 配套文件。解压后请放入独立技能目录。本站提供介绍与下载，不直接执行模型调用。',
   },
   {
+    id: 'amazon-keyboard-video-v8', category: 'design', title: '分镜脚本编写', subtitle: 'Keyboard & Mouse Video Director v8',
+    description: '为亚马逊美区键鼠编写真人场景分镜，以纯视觉表达卖点，输出英文提示词与镜头衔接方案。',
+    tags: ['视频分镜', '纯视觉表达'], color: 'stone', art: 'storyboard', icon: 'play', languageTag: '英文提示词',
+    source: './public/skills/amazon-keyboard-video-v8/SKILL.md',
+    download: './public/skills/amazon-keyboard-video-v8.zip',
+    overview: '基于产品图与真实卖点，为亚马逊美区键盘、鼠标及舒适办公产品设计 AI 视频分镜。使用场景融入真人模特及情感互动，卖点以画面和特效呈现，长续航采用固定机位下的日夜变化表达。逐镜输出垂直结构化字段、英文生成提示词和防穿帮约束，规划相邻镜头的动作方向与空间衔接。',
+    steps: ['下载原始技能 ZIP，解压后把 SKILL.md 放入 amazon-keyboard-video-v8 独立目录，按所用 AI 工具的 Skill 机制导入。', '上传清晰产品图，提供经过确认的核心卖点、功能参数依据、片长及画幅要求。', '使用下方调用提示词，获取逐镜垂直字段列表，包含对应素材、时长、构图、运镜、动作、英文提示词与声音方案。', '核对产品外观、手部交互、镜头衔接和卖点依据，再用于视频生成及后期剪辑；生成结果仍需逐镜验收。'],
+    prompt: '请使用 $amazon-keyboard-video-v8，为我的产品编写亚马逊美区 AI 视频分镜脚本。\n\n产品图：已附\n品牌与型号：[填写]\n真实核心卖点（按优先级）：[填写]\n功能与参数依据：[填写；缺少时标注待确认]\n视频时长与画幅：[填写]\n使用场景与视觉风格：[填写]\n\n使用场景融入真人模特与自然情感互动；以纯视觉画面表达卖点，不添加卖点字幕、文字卡片或标题。涉及长续航时，用固定机位下的日夜变化表达，不补造具体续航时长。\n逐镜采用垂直结构化字段列表，不用表格：序号、时长、对应素材、景别与构图、运镜方式、画面内容与动作描述、英文 AI 提示词与防错指令、声音与音效。\n保持产品外观与按键布局一致，明确相邻镜头的动作方向和空间衔接，列出需要逐镜验收的穿帮风险。',
+    takeaway: '让画面表达卖点，让动作连接每一个镜头。',
+    note: '下载包原样保留用户提供的 v8 ZIP，仅含 SKILL.md。站点显示名称为「分镜脚本编写」，内部调用名为 amazon-keyboard-video-v8。解压后请放入同名独立技能目录。防穿帮与无缝衔接是创作约束，生成效果仍需实际验收；本站不执行模型调用或视频生成。',
+  },
+  {
     id: 'prompt-architect', category: 'ai', title: '把想法，说清楚', subtitle: 'Prompt Architect',
     description: '把模糊的一句话，变成 AI 能听懂、能执行的好提示词。',
     tags: ['提示词工程', '结构化表达'], color: 'sage', art: 'prompt', icon: 'sparkles', featured: true,
