@@ -148,27 +148,6 @@ export const projects = [
     detail: 'Image Prompt Studio Universal Hover Edition。安装后刷新网页，鼠标停留图片约 700ms 打开悬浮窗；点击「生成此图提示词」才请求你配置的 API。请在安装扩展后使用这些功能。',
     features: ['下载 ZIP 并解压，在 Chrome / Edge 开发者模式下加载扩展目录', '在扩展设置中填写自己的 API Key、Base URL 和支持图片输入的模型', '悬停网页图片，手动点击生成提示词', '分别复制中文和英文结果；API 费用由所选服务商决定'],
   },
-  {
-    id: 'skill-garden', name: 'Yuli Studio', title: '给每一种创造力，一个栖身之处。',
-    description: '一片属于自己的数字自留地。把做过的项目、顺手的 Skills 和值得记下的经验，认真地放在一起。',
-    type: '个人网站', status: '当前项目', tags: ['Personal website', 'Skills', 'Open source'], demo: 'garden',
-    detail: '这就是你正在浏览的网站。产品、Skills、文章、关于我与交流五个入口共用一套内容配置。已经实现技能搜索、收藏、详情阅读和提示词复制，项目仓库与演示地址可单独绑定。',
-    features: ['五个内容入口，项目与技能各有位置', '搜索、收藏和可复制的提示词', '适配电脑、平板与手机', '仓库与演示地址分开配置'],
-  },
-  {
-    id: 'creative-workbench', name: 'Creative Workbench', title: '把一闪而过的灵感，留成作品。',
-    description: '为设计、内容与视觉探索预留的项目展示位。之后可以替换成你的真实作品与 GitHub 仓库。',
-    type: '创意工具', status: '示例展示位', tags: ['Design', 'Content', 'Creative tools'], demo: 'creative',
-    detail: '这是一个用于确认版式的示例展示位，并非已经发布的产品。后续提供项目名称、简介、截图和仓库地址后，就可以替换这里的内容；目前不会把它跳转到其他人的仓库。',
-    features: ['展示工具解决的问题与使用场景', '保留产品截图或交互预览的位置', '支持独立绑定 GitHub 与在线演示', '使用真实内容替换后即可对外展示'],
-  },
-  {
-    id: 'automation-kit', name: 'Everyday Automation', title: '少一点重复，多一点专注。',
-    description: '为自动化与效率工具预留的项目展示位。让一个个小工具，接住那些可以少做一次的事。',
-    type: '效率工具', status: '示例展示位', tags: ['Automation', 'Workflow', 'Productivity'], demo: 'automation',
-    detail: '这是自动化类项目的示例展示位。界面里的步骤只用于演示信息结构，不会自动处理文件、调用外部工具或向第三方发送资料。真实项目可在后续提供仓库地址后接入。',
-    features: ['用输入、处理与输出说明工作原理', '可展示终端、配置或操作界面', '仓库和在线演示分别维护', '未绑定地址时明确展示状态'],
-  },
 ];
 
 export const articles = [

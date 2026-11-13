@@ -4,10 +4,12 @@ import {readFileSync} from 'node:fs';
 import {siteConfig} from '../public/site.config.js';
 import {projects} from '../data.js';
 
-test('Yuli Studio name is consistent in config and current project',()=>{
+test('Yuli Studio metadata is retained without a self-referential project card',()=>{
   assert.equal(siteConfig.name,'Yuli Studio');
-  assert.equal(projects.find(project=>project.id==='skill-garden').name,siteConfig.name);
-  assert.ok(Object.hasOwn(siteConfig.projects,'skill-garden'));
+  assert.equal(siteConfig.repository,'https://github.com/yuliye0409-hue/yuli-studio-skills');
+  assert.equal(siteConfig.url,'https://yuliye0409-hue.github.io/yuli-studio-skills/');
+  assert.equal(projects.some(project=>project.id==='skill-garden'),false);
+  assert.equal(Object.hasOwn(siteConfig.projects,'skill-garden'),false);
 });
 test('Y monogram and favicon share the same vector artwork',()=>{
   const logo=readFileSync(new URL('../public/logo.svg',import.meta.url),'utf8').trim();

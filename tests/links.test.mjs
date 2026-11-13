@@ -20,16 +20,25 @@ test('every project and skill has a centralized binding slot',()=>{
   projects.forEach(project=>assert.ok(Object.hasOwn(siteConfig.projects,project.id)));
   skills.forEach(skill=>assert.ok(Object.hasOwn(siteConfig.skills,skill.id)));
 });
-test('verified owner and website are bound, while sample slots remain unbound',()=>{
+test('published projects have real addresses and exclude the site itself and placeholders',()=>{
+  assert.deepEqual(projects.map(project=>project.id),['ai-question-notebook','prompt-tool']);
+  assert.deepEqual(Object.keys(siteConfig.projects).sort(),projects.map(project=>project.id).sort());
+  for(const project of projects){
+    const binding=siteConfig.projects[project.id];
+    assert.ok(externalURL(binding.repository,{repository:true})||externalURL(binding.demo)||externalURL(binding.download),project.id);
+    assert.notEqual(binding.demo,siteConfig.url);
+    assert.notEqual(project.status,'示例展示位');
+  }
+});
+test('verified owner and website metadata are bound, while sample Skills remain unbound',()=>{
   assert.equal(siteConfig.profile.github,'https://github.com/yuliye0409-hue');
   for(const key of ['email','bilibili','xiaohongshu'])assert.equal(siteConfig.profile[key],null);
-  assert.equal(externalURL(siteConfig.projects['skill-garden'].repository,{repository:true}),siteConfig.projects['skill-garden'].repository);
-  assert.equal(externalURL(siteConfig.projects['skill-garden'].demo),siteConfig.projects['skill-garden'].demo);
-  for(const key of ['creative-workbench','automation-kit'])assert.deepEqual(siteConfig.projects[key],{repository:null,demo:null});
+  assert.equal(externalURL(siteConfig.repository,{repository:true}),siteConfig.repository);
+  assert.equal(externalURL(siteConfig.url),siteConfig.url);
   skills.filter(skill=>!skill.source).forEach(skill=>assert.equal(siteConfig.skills[skill.id],null));
-  assert.equal(siteConfig.skills['office-keyboard-mouse-tvc'],siteConfig.projects['skill-garden'].repository);
+  skills.filter(skill=>skill.source).forEach(skill=>assert.equal(siteConfig.skills[skill.id],siteConfig.repository));
   assert.equal(Object.hasOwn(siteConfig.skills,'amazon-a-plus-video-script'),false);
-  const download=new URL(skills.find(skill=>skill.source).download,siteConfig.projects['skill-garden'].demo);
+  const download=new URL(skills.find(skill=>skill.source).download,siteConfig.url);
   assert.equal(download.href,'https://yuliye0409-hue.github.io/yuli-studio-skills/public/skills/office-keyboard-mouse-tvc.zip');
 });
 test('sample articles are explicitly drafts without invented publish dates',()=>{

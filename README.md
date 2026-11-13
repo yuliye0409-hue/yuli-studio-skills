@@ -50,13 +50,13 @@ node server.mjs
 
 | 入口 | 内容 |
 |---|---|
-| 产品 | 「问而知」、Prompt-Tool、当前站点，以及两个标明「示例展示位」的项目；详情与预览 |
+| 产品 | 「问而知」与 Prompt-Tool 两个有实际地址的项目；静态封面、详情与真实入口 |
 | Skills | 一个已收录 Skill 与八个示例技能；分类、搜索、浏览器收藏、提示词复制与三个关联工作流 |
 | 文章 | 三篇明确标记的示例草稿，提供完整阅读视图，不编造发布日期 |
 | 关于我 | 无人物的创作理念卡，可替换的个人介绍；不编造经历 |
 | 交流 | 联系方式的待补充状态、交流方向、可复制提纲；不会假装发送成功 |
 
-「问而知」与 Prompt-Tool 保留静态封面、项目介绍及相关入口，不再显示旁侧动画面板。所有作品卡片使用相同的响应式网格，不保留动画空列。支持 `#products`、`#skills`、`#articles`、`#about`、`#connect` 深链接和浏览器前进/后退。
+「问而知」与 Prompt-Tool 保留静态封面、项目介绍及相关入口，不再显示旁侧动画面板。作品列表移除当前站点自身和未绑定地址的示例项目；桌面两列、手机单列。支持 `#products`、`#skills`、`#articles`、`#about`、`#connect` 深链接和浏览器前进/后退。
 
 Prompt-Tool 需在 Chrome / Edge 扩展管理页加载解压目录，并配置使用者自己的 API Key；不会在本网站收集密钥。下载与安装说明可从项目详情进入。
 按 `/` 或 `Ctrl/Cmd + K` 搜索技能。主内容页签支持方向键、Home、End；弹窗支持 Escape、关闭后恢复焦点。
@@ -84,13 +84,18 @@ profile: {
   bilibili: null,
   xiaohongshu: null,
 },
+repository: 'https://github.com/yuliye0409-hue/yuli-studio-skills', // 当前站点元信息，不作为作品卡片
+url: 'https://yuliye0409-hue.github.io/yuli-studio-skills/',
 projects: {
-  'skill-garden': {
-    repository: 'https://github.com/yuliye0409-hue/yuli-studio-skills',
-    demo: 'https://yuliye0409-hue.github.io/yuli-studio-skills/',
+  'ai-question-notebook': {
+    repository: 'https://github.com/yuliye0409-hue/ai-question-notebook',
+    demo: 'https://yuliye0409-hue.github.io/ai-question-notebook/',
   },
-  'creative-workbench': { repository: null, demo: null },
-  'automation-kit': { repository: null, demo: null },
+  'prompt-tool': {
+    repository: 'https://github.com/yuliye0409-hue/Prompt-Tool',
+    demo: null,
+    download: 'https://github.com/yuliye0409-hue/Prompt-Tool/archive/refs/heads/main.zip',
+  },
 },
 skills: {
   'prompt-architect': null, // 每个技能都有独立仓库位置
@@ -102,7 +107,7 @@ skills: {
 - 未提供时保持 `null`，显示「GitHub 待绑定」，不创建虚构的跳转。
 - 外部地址拒绝危险协议、凭据和异常端口；新窗口带 `noopener noreferrer`。
 - 后续提供「项目名称 + 仓库地址 + 在线演示（可选）」即可接入。
-- 真实项目和示例不同时，一并替换 `data.js` 中对应项目名称、简介、标签。
+- 新增作品时，在 `data.js` 填写真实名称、简介与标签，并绑定至少一个有效地址；不添加空白示例项目。
 
 ## 文件分工
 
